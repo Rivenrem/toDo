@@ -12,14 +12,6 @@ Go to the project directory
 
 Clone the project
 
-```bash
-  git clone git@github.com:qaprosoft/react-laba-international-2.git
-```
-
-```bash
-  cd homeworks/lizaveta-kryvanosava/20-react-api
-```
-
 Install dependencies
 
 ```bash
