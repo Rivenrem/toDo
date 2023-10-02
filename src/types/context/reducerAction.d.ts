@@ -1,6 +1,6 @@
 import constants from '@/constants';
 
-import IToDo from './toDo';
+import IToDo from '../toDo';
 
 export default interface ITodoAction {
   type: constants.Actions;
@@ -8,7 +8,7 @@ export default interface ITodoAction {
 }
 
 interface IPayload {
-  newToDoValue: string;
-  toDos: IToDo[];
-  todoItemId: string;
+  newToDoValue?: IToDo['value'];
+  toDos?: IToDo[];
+  todoItemId?: IToDo['id'];
 }

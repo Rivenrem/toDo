@@ -1,34 +1,35 @@
 'use client';
 
-import { useContext, useEffect } from 'react';
+import { useEffect } from 'react';
 
-import styles from '@/app/page.module.scss';
 import AddToDoForm from '@/components/AddToDoForm';
 import ToDo from '@/components/ToDo';
-import { ToDoContext } from '@/context/toDoContext';
 import { useEffectOnUpdateOnly } from '@/customHooks/useEffectOnUpdateOnly';
+import useToDoContext from '@/customHooks/useToDoContext';
+
+import styles from './page.module.scss';
 
 export default function Home() {
-  const toDoContext = useContext(ToDoContext);
+  const { setToDos, toDos } = useToDoContext();
 
   useEffect(() => {
     const storedList = localStorage.getItem('toDos');
 
     if (storedList) {
-      toDoContext!.setToDos(JSON.parse(storedList));
+      setToDos(JSON.parse(storedList));
     }
   }, []);
 
   useEffectOnUpdateOnly(() => {
-    localStorage.setItem('toDos', JSON.stringify(toDoContext!.toDos));
-  }, [toDoContext]);
+    localStorage.setItem('toDos', JSON.stringify(toDos));
+  }, [toDos]);
 
   return (
     <main className={styles.main}>
       <AddToDoForm />
 
       <div className={styles.main__list}>
-        {toDoContext!.toDos.map(toDo => (
+        {toDos.map(toDo => (
           <ToDo key={toDo.id} toDoData={toDo} />
         ))}
       </div>

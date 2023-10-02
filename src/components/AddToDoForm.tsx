@@ -1,39 +1,63 @@
-import { KeyboardEvent, useContext, useState } from 'react';
+import {
+  ChangeEvent,
+  KeyboardEvent,
+  useCallback,
+  useRef,
+  useState,
+} from 'react';
 
-import styles from '@/components/addToDoForm.module.scss';
-import { ToDoContext } from '@/context/toDoContext';
+import Button from '@/components/Button';
+import TextInput from '@/components/TextInput';
+import useToDoContext from '@/customHooks/useToDoContext';
+import useValidation from '@/customHooks/useValidation';
+
+import styles from './addToDoForm.module.scss';
 
 export default function AddToDoForm() {
   const [input, setInput] = useState('');
-  const toDoContext = useContext(ToDoContext);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const { addTodoItem } = useToDoContext();
+  const isValidToDo = useValidation();
 
-  const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') {
-      toDoContext!.addTodoItem(input);
-      setInput('');
-    }
-  };
+  const handleButtonClick = useCallback(() => {
+    if (!isValidToDo(input)) return;
+
+    addTodoItem(input);
+    setInput('');
+    inputRef.current?.focus();
+  }, [input]);
+
+  const handleKeyDown = useCallback(
+    ({ key }: KeyboardEvent<HTMLInputElement>) => {
+      if (key === 'Enter') {
+        handleButtonClick();
+      }
+    },
+    [handleButtonClick],
+  );
+
+  const onChangeHandler = useCallback(
+    ({ target: { value } }: ChangeEvent<HTMLInputElement>) => setInput(value),
+    [setInput],
+  );
 
   return (
     <div className={styles.form}>
-      <input
-        className={styles.form__input}
+      <TextInput
+        ref={inputRef}
+        onChangeHandler={onChangeHandler}
+        onKeyDownHandler={handleKeyDown}
         value={input}
-        type="text"
+        disabled={false}
         placeholder="Create Todo-Task"
-        onChange={({ target: { value } }) => setInput(value)}
-        onKeyDown={event => handleKeyDown(event)}
+        externalStyles={styles.form__input}
       />
 
-      <button
-        className={styles.form__button}
-        onClick={() => {
-          toDoContext!.addTodoItem(input);
-          setInput('');
-        }}
-      >
-        Add
-      </button>
+      <Button
+        onClickHandler={handleButtonClick}
+        text="Add"
+        externalStyles={styles.form__button}
+      />
     </div>
   );
 }

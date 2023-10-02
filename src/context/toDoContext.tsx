@@ -1,9 +1,9 @@
 'use client';
 
-import { createContext, ReactNode, useReducer } from 'react';
+import { createContext, ReactNode, useMemo, useReducer } from 'react';
 
 import constants from '@/constants';
-import IContext from '@/types/context';
+import IContext from '@/types/context/context';
 import IToDo from '@/types/toDo';
 
 import toDoReducer from './reducer';
@@ -15,64 +15,67 @@ function ToDoProvider({ children }: { children: ReactNode }) {
     toDos: [],
   });
 
-  const value = {
-    toDos: state.toDos,
+  const value = useMemo(
+    () => ({
+      toDos: state.toDos,
 
-    setToDos: (toDos: IToDo[]) => {
-      dispatch({
-        type: constants.Actions.SET_TODOS,
-        payload: {
-          newToDoValue: '',
-          toDos: toDos,
-          todoItemId: '',
-        },
-      });
-    },
+      setToDos: (toDos: IToDo[]) => {
+        dispatch({
+          type: constants.Actions.SET_TODOS,
+          payload: {
+            toDos: toDos,
+          },
+        });
+      },
 
-    addTodoItem: (newToDoValue: string) => {
-      dispatch({
-        type: constants.Actions.ADD_TODO_ITEM,
-        payload: {
-          newToDoValue,
-          toDos: [],
-          todoItemId: '',
-        },
-      });
-    },
+      addTodoItem: (newToDoValue: IToDo['value']) => {
+        dispatch({
+          type: constants.Actions.ADD_TODO_ITEM,
+          payload: {
+            newToDoValue,
+          },
+        });
+      },
 
-    removeTodoItem: (todoItemId: string) => {
-      dispatch({
-        type: constants.Actions.REMOVE_TODO_ITEM,
-        payload: {
-          newToDoValue: '',
-          toDos: [],
-          todoItemId,
-        },
-      });
-    },
+      removeTodoItem: (todoItemId: IToDo['id']) => {
+        dispatch({
+          type: constants.Actions.REMOVE_TODO_ITEM,
+          payload: {
+            todoItemId,
+          },
+        });
+      },
 
-    editTodoItem: (todoItemId: string, newToDoValue: string) => {
-      dispatch({
-        type: constants.Actions.EDIT_TODO_ITEM,
-        payload: {
-          newToDoValue,
-          toDos: [],
-          todoItemId,
-        },
-      });
-    },
+      editTodoItem: (todoItemId: IToDo['id'], newToDoValue: IToDo['value']) => {
+        dispatch({
+          type: constants.Actions.EDIT_TODO_ITEM,
+          payload: {
+            newToDoValue,
+            todoItemId,
+          },
+        });
+      },
 
-    toggleDone: (todoItemId: string) => {
-      dispatch({
-        type: constants.Actions.TOGGLE_DONE,
-        payload: {
-          newToDoValue: '',
-          toDos: [],
-          todoItemId,
-        },
-      });
-    },
-  };
+      toggleDone: (todoItemId: IToDo['id']) => {
+        dispatch({
+          type: constants.Actions.TOGGLE_DONE,
+          payload: {
+            todoItemId,
+          },
+        });
+      },
+
+      setEditMode: (todoItemId: IToDo['id']) => {
+        dispatch({
+          type: constants.Actions.SET_EDIT_MODE,
+          payload: {
+            todoItemId,
+          },
+        });
+      },
+    }),
+    [state],
+  );
 
   return <ToDoContext.Provider value={value}>{children}</ToDoContext.Provider>;
 }

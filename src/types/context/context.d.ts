@@ -7,4 +7,5 @@ export default interface IContext {
   removeTodoItem: (todoItemId: string) => void;
   editTodoItem: (todoItemId: string, newValue: string) => void;
   toggleDone: (todoItemId: string) => void;
+  setEditMode: (todoItemId: string) => void;
 }
